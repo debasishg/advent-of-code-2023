@@ -1,0 +1,13 @@
+*.class
+*.log
+.metals/readonly/scala/Predef.scala
+.bloop
+.bsp
+.metals
+project/.bloop
+project/target
+target/
+core/target/
+project/metals.sbt
+project/project/metals.sbt
+project/project/project/metals.sbt
