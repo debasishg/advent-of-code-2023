@@ -37,26 +37,44 @@ def checkIfAdjacent(
         (srow == nrow + 1 && symbolInBetween) ||
         (srow == nrow - 1 && symbolInBetween)
 
-val (symbols, numbers) = io.Source
+val (symbols, numbers, rows) = io.Source
     .fromResource("day3.txt")
     .getLines
     .zipWithIndex
-    .foldLeft((List.empty[SymbolCoordinates], List.empty[NumberCoordinates]))((a, e) =>
-        val (symbols, numbers) = a
-        val (line, row)        = e
-        val s                  = findSymbols(line, row)
-        val n                  = findNumbers(line, row)
-        (symbols ++ s, numbers ++ n)
+    .foldLeft((List.empty[SymbolCoordinates], List.empty[NumberCoordinates], 0))((a, e) =>
+        val (symbols, numbers, _) = a
+        val (line, row)           = e
+        val s                     = findSymbols(line, row)
+        val n                     = findNumbers(line, row)
+        (symbols ++ s, numbers ++ n, row)
     )
 
+// get all symbols that are in the (same | previous | next) row as the input row
+// only those symbols can be adjacent to the number
+def getRowSymbolMapping(rows: Int): Map[Int, List[SymbolCoordinates]] =
+    (0 to rows).map { row =>
+        (row, symbols.filter(s => s.row == row || s.row == row + 1 || s.row == row - 1))
+    }.toMap
+
 def part1 =
-    val allAdjacents = numbers.filter(number => checkIfAdjacent(number, symbols).isDefined)
+    val rowMapping = getRowSymbolMapping(rows)
+    val allAdjacents =
+        numbers.filter(number =>
+            checkIfAdjacent(
+              number,
+              rowMapping.get(number.row).getOrElse(List.empty[SymbolCoordinates])
+            ).isDefined
+        )
     allAdjacents.map(_.number).sum
 
 def part2 =
+    val rowMapping = getRowSymbolMapping(rows)
     val adjacentToStars =
         numbers.foldLeft(Map.empty[SymbolCoordinates, List[NumberCoordinates]])((a, number) =>
-            checkIfAdjacent(number, symbols) match
+            checkIfAdjacent(
+              number,
+              rowMapping.get(number.row).getOrElse(List.empty[SymbolCoordinates])
+            ) match
             case Some(symbol) if symbol.symbol == "*" =>
                 val numbers = a.getOrElse(symbol, List.empty[NumberCoordinates])
                 a + (symbol -> (numbers :+ number))
