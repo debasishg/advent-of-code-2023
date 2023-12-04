@@ -48,6 +48,7 @@ val (symbols, numbers, rows) = io.Source
         val n                     = findNumbers(line, row)
         (symbols ++ s, numbers ++ n, row)
     )
+val allRowsMapping = getRowSymbolMapping(rows)
 
 // get all symbols that are in the (same | previous | next) row as the input row
 // only those symbols can be adjacent to the number
@@ -57,23 +58,21 @@ def getRowSymbolMapping(rows: Int): Map[Int, List[SymbolCoordinates]] =
     }.toMap
 
 def part1 =
-    val rowMapping = getRowSymbolMapping(rows)
     val allAdjacents =
         numbers.filter(number =>
             checkIfAdjacent(
               number,
-              rowMapping.get(number.row).getOrElse(List.empty[SymbolCoordinates])
+              allRowsMapping.get(number.row).getOrElse(List.empty[SymbolCoordinates])
             ).isDefined
         )
     allAdjacents.map(_.number).sum
 
 def part2 =
-    val rowMapping = getRowSymbolMapping(rows)
     val adjacentToStars =
         numbers.foldLeft(Map.empty[SymbolCoordinates, List[NumberCoordinates]])((a, number) =>
             checkIfAdjacent(
               number,
-              rowMapping.get(number.row).getOrElse(List.empty[SymbolCoordinates])
+              allRowsMapping.get(number.row).getOrElse(List.empty[SymbolCoordinates])
             ) match
             case Some(symbol) if symbol.symbol == "*" =>
                 val numbers = a.getOrElse(symbol, List.empty[NumberCoordinates])
