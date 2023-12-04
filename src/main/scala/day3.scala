@@ -48,6 +48,9 @@ val (symbols, numbers, rows) = io.Source
         val n                     = findNumbers(line, row)
         (symbols ++ s, numbers ++ n, row)
     )
+
+// for each row, find the symbols that are in the same row or the previous or next row
+// only these need to be considered for adjacency of numbers in a specific row
 val allRowsMapping = getRowSymbolMapping(rows)
 
 // get all symbols that are in the (same | previous | next) row as the input row
