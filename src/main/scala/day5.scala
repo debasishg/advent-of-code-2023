@@ -1,5 +1,7 @@
 package advent2023.day5
 
+import scala.collection.immutable.ListMap
+
 type SeedNo = Long
 
 case class LongRange(start: Long, end: Long):
@@ -17,9 +19,9 @@ def findFirstMatch(source: Long, mappings: List[MapRecord]): Option[Long] =
         case mr if mr.mappingFor(source).isDefined => mr.mappingFor(source).get
     }
 
-case class SeedInfo(seeds: List[SeedNo], map: Map[String, List[MapRecord]])
+case class SeedInfo(seeds: List[SeedNo], map: ListMap[String, List[MapRecord]])
 object SeedInfo:
-    def empty: SeedInfo = SeedInfo(List.empty, Map.empty)
+    def empty: SeedInfo = SeedInfo(List.empty, ListMap.empty)
 
 def getMapName(line: String): Option[String] =
     if line.contains(" map:") then line.split(" ").headOption
@@ -58,26 +60,10 @@ def buildSeedInfo = io.Source
 
 val (seedInfo, _) = buildSeedInfo
 val seeds         = seedInfo.seeds
-val mappings      = seedInfo.map
+val mappings      = seedInfo.map.values
 
-val seedToSoil            = mappings("seed-to-soil")
-val soilToFertilizer      = mappings("soil-to-fertilizer")
-val fertilizerToWater     = mappings("fertilizer-to-water")
-val waterToLight          = mappings("water-to-light")
-val lightToTemperature    = mappings("light-to-temperature")
-val temperatureToHumidity = mappings("temperature-to-humidity")
-val humidityToLocation    = mappings("humidity-to-location")
-
-def soilToLocation(seed: Long) =
-    List(
-      soilToFertilizer,
-      fertilizerToWater,
-      waterToLight,
-      lightToTemperature,
-      temperatureToHumidity,
-      humidityToLocation
-    ).foldLeft(findFirstMatch(seed, seedToSoil).getOrElse(seed)): (acc, list) =>
-        findFirstMatch(acc, list).getOrElse(acc)
+def soilToLocation(seed: Long) = mappings.foldLeft(seed): (acc, list) =>
+    findFirstMatch(acc, list).getOrElse(acc)
 
 def findMinLocation(seeds: List[Long]) =
     seeds.map(soilToLocation).min
