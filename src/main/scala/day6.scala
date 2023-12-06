@@ -8,18 +8,18 @@ def buildInput = io.Source
     .map(_.split(":")(1).trim.replaceAll(" +", " ").split(" ").map(_.toLong).toList)
     .toList
 
-def margin(input: Map[Long, Long]) = input.map { case (t, d) =>
+def margin(input: Map[Long, Long]) = input.map: (t, d) =>
     waysToWin(t, d)
-}.product
+.product
 
 def waysToWin(time: Long, distance: Long) =
-    (1L to time - 1L).map { t =>
+    (1L to time - 1L).map: t =>
         val pushTime        = t
         val travelTime      = time - pushTime
         val speed           = pushTime
         val distanceCovered = speed * travelTime
         if distanceCovered > distance then 1 else 0
-    }.sum
+    .sum
 
 def part1 =
     val in  = buildInput
