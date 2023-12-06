@@ -26,7 +26,7 @@ def getMapName(line: String): Option[String] =
     else None
 
 def buildSeedInfo = io.Source
-    .fromResource("day5.txt")
+    .fromResource("day51.txt")
     .getLines
     .foldLeft((SeedInfo.empty, "")): (acc, e) =>
         val (a, mapName) = acc
@@ -68,24 +68,25 @@ val lightToTemperature    = mappings("light-to-temperature")
 val temperatureToHumidity = mappings("temperature-to-humidity")
 val humidityToLocation    = mappings("humidity-to-location")
 
-def soilToLocationForASeed(seed: Long) =
-    val soil        = findFirstMatch(seed, seedToSoil).getOrElse(seed)
-    val fertilizer  = findFirstMatch(soil, soilToFertilizer).getOrElse(soil)
-    val water       = findFirstMatch(fertilizer, fertilizerToWater).getOrElse(fertilizer)
-    val light       = findFirstMatch(water, waterToLight).getOrElse(water)
-    val temperature = findFirstMatch(light, lightToTemperature).getOrElse(light)
-    val humidity    = findFirstMatch(temperature, temperatureToHumidity).getOrElse(temperature)
-    val location    = findFirstMatch(humidity, humidityToLocation).getOrElse(humidity)
-    location
+def soilToLocation(seed: Long) =
+    List(
+      soilToFertilizer,
+      fertilizerToWater,
+      waterToLight,
+      lightToTemperature,
+      temperatureToHumidity,
+      humidityToLocation
+    ).foldLeft(findFirstMatch(seed, seedToSoil).getOrElse(seed)): (acc, list) =>
+        findFirstMatch(acc, list).getOrElse(acc)
 
 def findMinLocation(seeds: List[Long]) =
-    seeds.map(soilToLocationForASeed).min
+    seeds.map(soilToLocation).min
 
 def findMinLocation(seed: Long, length: Long) =
     var minimum = Long.MaxValue
     var i       = 0L
     while i < length do
-        val location = soilToLocationForASeed(seed + i)
+        val location = soilToLocation(seed + i)
         i += 1
         if location < minimum then
             minimum = location
