@@ -26,7 +26,7 @@ def getMapName(line: String): Option[String] =
     else None
 
 def buildSeedInfo = io.Source
-    .fromResource("day51.txt")
+    .fromResource("day5.txt")
     .getLines
     .foldLeft((SeedInfo.empty, "")): (acc, e) =>
         val (a, mapName) = acc
