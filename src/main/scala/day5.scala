@@ -7,12 +7,42 @@ type SeedNo = Long
 case class LongRange(start: Long, end: Long):
     def contains(n: Long) = start <= n && n <= end
 
+    // Interval strictly before another? True if the end of this is less than the start of other
+    def before(other: LongRange) = end < other.start
+
+    // Interval strictly after another? True if the start of this is greater than the end of other
+    def after(other: LongRange) = start > other.end
+
+    def overlapping(other: LongRange) = ???
+
+    def intersection(other: LongRange) =
+        val start = if this.start > other.start then this.start else other.start
+        val end   = if this.end < other.end then this.end else other.end
+        LongRange(start, end)
+
+    def intersects(other: LongRange) =
+        contains(other.start) || contains(other.end) || other.contains(start) || other.contains(end)
+
 case class MapRecord(sourceRange: LongRange, destinationRange: LongRange):
     def mappingFor(source: Long): Option[Long] =
         if sourceRange.contains(source) then
             val offset = source - sourceRange.start
             Some(destinationRange.start + offset)
         else None
+
+/** find matching ranges
+  *
+  * if sourceRange = (40, 75) and mappings = List(MapRecord(LongRange(40, 55), LongRange(12, 27)),
+  * MapRecord(LongRange(56, 75), LongRange(28, 47))) then output LongRange(12, 47)
+  *
+  * if sourceRange = (40, 75) and mappings = List(MapRecord(LongRange(40, 55), LongRange(12, 27)),
+  * MapRecord(LongRange(60, 75), LongRange(28, 43))) then output LongRange(12, 47)
+  *
+  * @param sourceRange
+  * @param mappings
+  * @return
+  */
+def findMatchingRanges(sourceRange: LongRange, mappings: List[MapRecord]) = ???
 
 def findFirstMatch(source: Long, mappings: List[MapRecord]): Option[Long] =
     mappings.collectFirst {
