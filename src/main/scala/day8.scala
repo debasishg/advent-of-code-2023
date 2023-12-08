@@ -62,7 +62,7 @@ def part1 = findPathToFinal("AAA", _ == "ZZZ")._1
 // lcm trick from Alex
 def part2 =
     allStarts
-        .map(s => findPathToFinal(s, _.endsWith("Z")))
+        .map(findPathToFinal(_, _.endsWith("Z")))
         .map: (l, _) =>
             BigInt(l)
         .reduce(lcm(_, _))
