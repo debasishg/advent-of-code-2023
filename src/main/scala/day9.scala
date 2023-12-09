@@ -11,13 +11,13 @@ val buildInput = io.Source
 enum Mode:
     case Forward, Backward
 
-@tailrec def extrapolate(l: List[Long], lastNos: List[Long], mode: Mode): List[Long] =
+@tailrec def extrapolate(l: List[Long], extrapolations: List[Long], mode: Mode): List[Long] =
     val r = l.sliding(2).map(l => l.last - l.head).toList
-    if r.forall(_ == 0) then lastNos.prepended(0)
+    if r.forall(_ == 0) then extrapolations.prepended(0)
     else
         extrapolate(
           r,
-          lastNos.prepended(if mode == Mode.Forward then r.last else r.head),
+          extrapolations.prepended(if mode == Mode.Forward then r.last else r.head),
           mode
         )
 
