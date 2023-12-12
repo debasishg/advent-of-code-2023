@@ -50,10 +50,7 @@ def findIndexes(inputString: String, charToFind: Char): List[Long] =
 
 // min distance is computed from the offset of row and column
 def distance(c1: Coord, c2: Coord) =
-    val rowdiff  = c2.row - c1.row
-    val coldiff  = c2.column - c1.column
-    val distance = rowdiff.abs + coldiff.abs
-    distance
+    (c2.row - c1.row).abs + (c2.column - c1.column).abs
 
 def sum(in: Map[Long, Coord]) =
     in.keys.toList.combinations(2).collect { case k1 :: k2 :: Nil =>
