@@ -2,12 +2,14 @@ package advent2023.day11
 
 case class Coord(row: Long, column: Long)
 
-def buildInputLazy(factor: Long) =
+def buildInput(factor: Long) =
     val in = io.Source
         .fromResource("day11.txt")
         .getLines
         .toList
 
+    // only store indexes of blank rows and columns
+    // adjust when you need to find the index of a galaxy
     val blankRows = findAllBlankRows(in)
     val blankColumns = findAllBlankColumns(in)
 
@@ -20,41 +22,31 @@ def buildInputLazy(factor: Long) =
             a._1 ++ galaxiesInRow.zipWithIndex.map { case(g, idx) =>
                 val blankColsPreceding = findNumberOfBlanksPreceding(blankColumns, g)
                 (a._2 + idx, 
-                    Coord(offset(blankRowsPreceding, i, factor), offset(blankColsPreceding, g, factor)))
+                    Coord(adjusted(blankRowsPreceding, i, factor), adjusted(blankColsPreceding, g, factor)))
             } -> (a._2 + galaxiesInRow.length)
         }._1
 
-def offset(blanksPreceding: Long, index: Long, factor: Long) =
-    if (blanksPreceding == 0) index
-    else (index - blanksPreceding) + factor * blanksPreceding
+def adjusted(blanksPreceding: Long, index: Long, factor: Long) =
+    (index - blanksPreceding) + factor * blanksPreceding
 
 def findNumberOfBlanksPreceding(blankRows: List[Long], index: Long) =
     blankRows.takeWhile(_ < index).size
 
-def transposeStrings(input: List[String]): List[String] = {
-  val listOfLists = input.map(_.toList)
-  val transposedList = listOfLists.transpose
-  transposedList.map(_.mkString)
-}
+def transpose(input: List[String]): List[String] =
+  input.map(_.toList).transpose.map(_.mkString)
 
-def findAllBlankRows(input: List[String]) = {
-  val indexedStrings = input.zipWithIndex
-  val blankRows = indexedStrings.filter { case (s, _) =>
+def findAllBlankRows(input: List[String]) =
+  val blankRows = input.zipWithIndex.filter: (s, _) =>
     findIndexes(s, '#').isEmpty
-  }
   blankRows.map { case (_, index) => index.toLong }
-}
 
 def findAllBlankColumns(input: List[String]) = 
-    findAllBlankRows(transposeStrings(input))
+    findAllBlankRows(transpose(input))
 
 def findIndexes(inputString: String, charToFind: Char): List[Long] =
-    val indexedChars = inputString.zipWithIndex
-    val matchingPairs = indexedChars.filter { case (char, index) =>
+    val matchingPairs = inputString.zipWithIndex.filter: (char, _) =>
         char == charToFind
-    }
-    val indexes = matchingPairs.map { case (_, index) => index.toLong }
-    indexes.toList
+    matchingPairs.map(_._2.toLong).toList
 
 def distance(c1: Coord, c2: Coord) =
     val rowdiff  = c2.row - c1.row
@@ -62,16 +54,16 @@ def distance(c1: Coord, c2: Coord) =
     val distance = rowdiff.abs + coldiff.abs
     distance
 
-def computeSum(in: Map[Long, Coord]) =
-    in.keys.toList.combinations(2).collect { case List(k1, k2) =>
+def sum(in: Map[Long, Coord]) =
+    in.keys.toList.combinations(2).collect { case k1 :: k2 :: Nil=>
         distance(in(k1), in(k2))
     }.sum
 
 def part1 = 
-    computeSum(buildInputLazy(2))
+    sum(buildInput(2))
 
 def part2 = 
-    computeSum(buildInputLazy(1000000))
+    sum(buildInput(1000000))
 
 @main def day11 =
     println("\nDay 11\n------------")
