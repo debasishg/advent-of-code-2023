@@ -14,7 +14,7 @@ def buildInput(factor: Long) =
     val blankColumns = findAllBlankColumns(in)
 
     in.zipWithIndex
-        .foldLeft((Map.empty[Long, Coord], 0L)) { (a, e) =>
+        .foldLeft((Map.empty[Long, Coord], 0L)): (a, e) =>
             val s             = e._1
             val i             = e._2
             val blankRowsPreceding = findNumberOfBlanksPreceding(blankRows, i)
@@ -24,7 +24,7 @@ def buildInput(factor: Long) =
                 (a._2 + idx, 
                     Coord(adjusted(blankRowsPreceding, i, factor), adjusted(blankColsPreceding, g, factor)))
             } -> (a._2 + galaxiesInRow.length)
-        }._1
+        ._1
 
 def adjusted(blanksPreceding: Long, index: Long, factor: Long) =
     (index - blanksPreceding) + factor * blanksPreceding
@@ -48,6 +48,7 @@ def findIndexes(inputString: String, charToFind: Char): List[Long] =
         char == charToFind
     matchingPairs.map(_._2.toLong).toList
 
+// min distance is computed from the offset of row and column
 def distance(c1: Coord, c2: Coord) =
     val rowdiff  = c2.row - c1.row
     val coldiff  = c2.column - c1.column
@@ -55,7 +56,7 @@ def distance(c1: Coord, c2: Coord) =
     distance
 
 def sum(in: Map[Long, Coord]) =
-    in.keys.toList.combinations(2).collect { case k1 :: k2 :: Nil=>
+    in.keys.toList.combinations(2).collect { case k1 :: k2 :: Nil =>
         distance(in(k1), in(k2))
     }.sum
 
