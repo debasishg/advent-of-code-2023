@@ -1,8 +1,8 @@
 package advent2023.day12
 
 private val Operational = '.'
-private val Damaged = '#'
-private val Unknown = '?'
+private val Damaged     = '#'
+private val Unknown     = '?'
 
 object Memo:
     def memoize[A1, A2, A3, B](fn: (A1, A2, A3) => B): (A1, A2, A3) => B =
@@ -15,7 +15,7 @@ val solver: (states: List[Char], counts: List[Int], damagesSeen: Int) => Long =
     Memo.memoize: (states, counts, damagesSeen) =>
         states match
         case Nil if (damagesSeen == 0 && counts.isEmpty) || counts == List(damagesSeen) => 1L
-        case Nil => 0L
+        case Nil                                                                        => 0L
 
         case Operational :: rest if counts.headOption.contains(damagesSeen) =>
             // got operational but we have already seen the required number of damaged ones
