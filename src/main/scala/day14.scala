@@ -90,6 +90,8 @@ def cycle =
 
 val memo = scala.collection.mutable.Map.empty[String, Int]
 
+// the trick here is to find that the cycle repeats after a certain number of iterations
+// need to find this repeating cycle and then just compute the remaining iterations
 def repeatCycle(n: Int, cycleFound: Boolean): Unit =
     if n == 0 then ()
     // once the cycle has been found just recurse

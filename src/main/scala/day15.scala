@@ -15,7 +15,7 @@ case class Lens(label: String, focalLength: Int)
 
 def part1 = input.map(hash).sum
 
-def part2 = 
+def part2 =
     val boxes = Array.fill[List[Lens]](256)(Nil)
 
     def addLens(label: String, focalLength: Int) =
@@ -23,7 +23,7 @@ def part2 =
 
         boxes(h).indexWhere(_.label == label) match
         case -1 => boxes(h) = boxes(h) :+ Lens(label, focalLength)
-        case i   => boxes(h) = boxes(h).updated(i, Lens(label, focalLength))
+        case i  => boxes(h) = boxes(h).updated(i, Lens(label, focalLength))
 
     def removeLens(label: String) =
         val h = hash(label)
@@ -33,19 +33,17 @@ def part2 =
         (boxIndex + 1) * (lensIndex + 1) * lens.focalLength
 
     for in <- input do
-      in match
-      case s"$label-" => removeLens(label)
-      case s"$label=$focalLength" => addLens(label, focalLength.toInt)
+        in match
+        case s"$label-"             => removeLens(label)
+        case s"$label=$focalLength" => addLens(label, focalLength.toInt)
 
     val focusingPowers =
         for
-            (box, boxIndex) <- boxes.zipWithIndex
+            (box, boxIndex)   <- boxes.zipWithIndex
             (lens, lensIndex) <- box.zipWithIndex
-        yield
-        focusingPower(boxIndex, lensIndex, lens)
+        yield focusingPower(boxIndex, lensIndex, lens)
 
     focusingPowers.sum
-
 
 @main def day15 =
     println("\nDay 15\n------------")
