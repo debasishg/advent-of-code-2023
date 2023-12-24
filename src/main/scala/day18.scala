@@ -46,6 +46,8 @@ lazy val parsePart2: List[DigLine] = input
         case s"$dir $size (#$color)" => DigLine(color.drop(5).toDirection, Integer.parseInt(color.take(5), 16))
     .toList
 
+// using the shoelace formula (trapezoid formula)
+// https://en.wikipedia.org/wiki/Shoelace_formula
 def shoelace(coordinates: List[Coordinate]): Long = 
     coordinates.sliding(2).map {
         case List(Coordinate(x1, y1), Coordinate(x2, y2)) => (y1 + y2) * (x1 - x2)
