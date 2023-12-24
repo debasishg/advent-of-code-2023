@@ -32,16 +32,16 @@ case class Position(row: Row, col: Col, direction: Direction):
     case West  => Array(Position(row, col, North), Position(row, col, South))
     ).map(_.nextForwardPos)
 
-    def isTarget(map: Array[Array[Int]]): Boolean = 
+    def isTarget(map: Array[Array[Int]]): Boolean =
         (row == map.length - 1) && (col == map(row).length - 1)
 
-    def isInBounds(map: Array[Array[Int]]): Boolean = 
+    def isInBounds(map: Array[Array[Int]]): Boolean =
         row >= 0 && col >= 0 && row < map.length && col < map(row).length
-
 
 case class Crucible(position: Position, streak: Int, heatLoss: Int)
 object Crucible:
-    val start = Crucible(Position(0, 0, East), 0, 0)
+    val startEast  = Crucible(Position(0, 0, East), 0, 0)
+    val startSouth = Crucible(Position(0, 0, South), 0, 0)
     given Ordering[Crucible] with
         def compare(x: Crucible, y: Crucible): Int =
             y.heatLoss.compareTo(x.heatLoss)
@@ -67,14 +67,18 @@ def neighbors(
         crucible.position.afterTurningPositions
             .filter(_.isInBounds(map))
             .foreach(newPos =>
-                neighbors.addOne(Crucible(newPos, 1, crucible.heatLoss + map(newPos.row)(newPos.col)))
+                neighbors.addOne(Crucible(
+                  newPos,
+                  1,
+                  crucible.heatLoss + map(newPos.row)(newPos.col)
+                ))
             )
 
     neighbors.toArray
 
 def dijkstra(map: Array[Array[Int]], start: Crucible, minStreak: Int, maxStreak: Int): Int =
-    val visited   = mutable.Set.empty[(Position, Int)]
-    val toVisit   = mutable.PriorityQueue.empty[Crucible]
+    val visited = mutable.Set.empty[(Position, Int)]
+    val toVisit = mutable.PriorityQueue.empty[Crucible]
 
     toVisit.enqueue(start)
     var target: Option[Crucible] = None
@@ -90,12 +94,16 @@ def dijkstra(map: Array[Array[Int]], start: Crucible, minStreak: Int, maxStreak:
 
         if !visited.contains(visitedHash) then
             visited.addOne(visitedHash)
-            toVisit.enqueue(neighbors(map, curr, minStreak, maxStreak): _*)
+            toVisit.enqueue(neighbors(map, curr, minStreak, maxStreak)*)
 
     target.head.heatLoss
 
-def part1 = dijkstra(input, Crucible.start, 0, 3)
-def part2 = dijkstra(input, Crucible.start, 4, 10)
+def part1 = dijkstra(input, Crucible.startEast, 0, 3)
+def part2 =
+    List(
+      dijkstra(input, Crucible.startEast, 4, 10),
+      dijkstra(input, Crucible.startSouth, 4, 10)
+    ).min
 
 @main def day17 =
     println("\nDay 17\n------------")
