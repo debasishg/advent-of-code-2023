@@ -107,5 +107,5 @@ def part2 =
 
 @main def day17 =
     println("\nDay 17\n------------")
-    println(s"Part 1: $part1")
-    println(s"Part 2: $part2")
+    println(s"Part 1: $part1") // 668
+    println(s"Part 2: $part2") // 788
