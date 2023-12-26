@@ -43,15 +43,16 @@ lazy val parsePart1: List[DigLine] = input
 
 lazy val parsePart2: List[DigLine] = input
     .map:
-        case s"$dir $size (#$color)" => DigLine(color.drop(5).toDirection, Integer.parseInt(color.take(5), 16))
+        case s"$dir $size (#$color)" =>
+            DigLine(color.drop(5).toDirection, Integer.parseInt(color.take(5), 16))
     .toList
 
 // using the shoelace formula (trapezoid formula)
 // https://en.wikipedia.org/wiki/Shoelace_formula
-def shoelace(coordinates: List[Coordinate]): Long = 
+def shoelace(coordinates: List[Coordinate]): Long =
     coordinates.sliding(2).map {
         case List(Coordinate(x1, y1), Coordinate(x2, y2)) => (y1 + y2) * (x1 - x2)
-        case x => 0
+        case x                                            => 0
     }.sum / 2
 
 def perimeter(lines: List[DigLine]): Long = lines.map(_.size).sum + 1
@@ -60,7 +61,7 @@ def part1 =
     val lines = parsePart1
     shoelace(coordinates(lines)) + perimeter(lines) / 2 + 1
 
-def part2 = 
+def part2 =
     val lines = parsePart2
     shoelace(coordinates(lines)) + perimeter(lines) / 2 + 1
 
