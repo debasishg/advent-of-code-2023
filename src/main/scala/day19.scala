@@ -104,6 +104,34 @@ final case class Workflow(name: WorkflowName, conditional: Conditional):
     def eval(part: Part): FinalState | WorkflowName =
         conditional.eval(part)
 
+object Workflow:
+    def countInterpreter(
+        parts: Parts,
+        start: WorkflowName | FinalState | Conditional
+    ): Long =
+        start match
+        case Accept => parts.count()
+        case Reject => 0L
+
+        case Conditional(Condition(cat, op, rating), trueBranch, falseBranch) =>
+            val (trueParts, falseParts) = op match
+            case LT => parts.split(cat, rating)
+            case GT => parts.split(cat, rating + 1).swap
+            trueParts.map(countInterpreter(_, trueBranch)).getOrElse(0L) + falseParts.map(
+              countInterpreter(
+                _,
+                falseBranch
+              )
+            ).getOrElse(0L)
+
+        case name: WorkflowName =>
+            workflows(name) match
+            case Workflow(
+                  name,
+                  cond @ Conditional(Condition(cat, op, rating), trueBranch, falseBranch)
+                ) =>
+                countInterpreter(parts, cond)
+
 lazy val parts: List[Part] = scala.io.Source
     .fromResource("day19-parts.txt")
     .getLines
@@ -166,36 +194,9 @@ def part1 =
 
 extension [T](part: (T, T)) private inline def swap: (T, T) = (part._2, part._1)
 
-def countCombinations(
-    parts: Parts,
-    start: WorkflowName | FinalState | Conditional
-): Long =
-    start match
-    case Accept => parts.count()
-    case Reject => 0L
-
-    case Conditional(Condition(cat, op, rating), trueBranch, falseBranch) =>
-        val (trueParts, falseParts) = op match
-        case LT => parts.split(cat, rating)
-        case GT => parts.split(cat, rating + 1).swap
-        trueParts.map(countCombinations(_, trueBranch)).getOrElse(0L) + falseParts.map(
-          countCombinations(
-            _,
-            falseBranch
-          )
-        ).getOrElse(0L)
-
-    case name: WorkflowName =>
-        workflows(name) match
-        case Workflow(
-              name,
-              cond @ Conditional(Condition(cat, op, rating), trueBranch, falseBranch)
-            ) =>
-            countCombinations(parts, cond)
-
 def part2 =
     val ratingsRange = Range(1, 4001)
-    countCombinations(
+    Workflow.countInterpreter(
       parts = Parts(
         x = ratingsRange,
         m = ratingsRange,
