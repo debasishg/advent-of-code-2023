@@ -32,9 +32,6 @@ sealed trait Module:
 case class Broadcaster(val name: String, val destinations: Vector[String]) extends Module:
     override def handlePulse(source: String, input: Pulse): Option[Pulse] = Some(input)
 
-case class Button(val name: String, val destinations: Vector[String]) extends Module:
-    override def handlePulse(source: String, input: Pulse): Option[Pulse] = Some(Pulse.Low)
-
 case class FlipFlop(val name: String, val destinations: Vector[String]) extends Module:
     private var state: ModuleState = ModuleState.Off
 
@@ -86,20 +83,19 @@ def input(lines: List[String]) =
                 ))
         .to(mutable.Map)
 
-    // todo : process inside out for efficiency
+    // update inputs for conjunctions
     conjunctions.foreach(c =>
         val conjunction = modules(c).asInstanceOf[Conjunction]
-        modules.foreach { case (name, module) =>
-            val destinations = module.destinations
-            destinations.filter(_ == conjunction.name).foreach { n =>
-                val conj = modules(n).asInstanceOf[Conjunction]
-                modules(n) = Conjunction(
-                  conjunction.name,
-                  conjunction.destinations,
-                  name +: conj.inputs
-                )
-            }
-        }
+        modules.filter(_._2.destinations.contains(conjunction.name))
+            .foreach:
+                case (name, module) =>
+                    module.destinations.filter(_ == conjunction.name).foreach: n =>
+                        val conj = modules(n).asInstanceOf[Conjunction]
+                        modules(n) = Conjunction(
+                          conjunction.name,
+                          conjunction.destinations,
+                          name +: conj.inputs
+                        )
     )
     modules.toMap
 
