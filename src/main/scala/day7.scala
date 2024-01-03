@@ -79,7 +79,7 @@ def toCardLabels(str: String) = str.map {
     case 'A'            => CardLabel.Ace
 }.toList
 
-def buildInput = io.Source
+def buildInput = scala.io.Source
     .fromResource("day7.txt")
     .getLines
     .map(_.split(" ").toList)

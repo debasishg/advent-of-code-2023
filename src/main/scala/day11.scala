@@ -3,7 +3,7 @@ package advent2023.day11
 case class Coord(row: Long, column: Long)
 
 def buildInput(factor: Long) =
-    val in = io.Source
+    val in = scala.io.Source
         .fromResource("day11.txt")
         .getLines
         .toList

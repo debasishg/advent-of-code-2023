@@ -57,7 +57,7 @@ def getMapName(line: String): Option[String] =
     if line.contains(" map:") then line.split(" ").headOption
     else None
 
-def buildSeedInfo = io.Source
+def buildSeedInfo = scala.io.Source
     .fromResource("day5.txt")
     .getLines
     .foldLeft((SeedInfo.empty, "")): (acc, e) =>

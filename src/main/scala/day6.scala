@@ -2,7 +2,7 @@ package advent2023.day6
 
 import cats.implicits.*
 
-def buildInput = io.Source
+def buildInput = scala.io.Source
     .fromResource("day6.txt")
     .getLines
     .map(_.split(":")(1).trim.replaceAll(" +", " ").split(" ").map(_.toLong).toList)

@@ -37,7 +37,7 @@ def checkIfAdjacent(
         (srow == nrow + 1 && symbolInBetween) ||
         (srow == nrow - 1 && symbolInBetween)
 
-val (symbols, numbers, rows) = io.Source
+val (symbols, numbers, rows) = scala.io.Source
     .fromResource("day3.txt")
     .getLines
     .zipWithIndex

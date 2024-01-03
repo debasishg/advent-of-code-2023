@@ -16,7 +16,7 @@ def parseLine(line: String): (Set[Int], Set[Int]) =
         (winning.toSet, input.toSet)
     }.toList.head
 
-def cards = io.Source
+def cards = scala.io.Source
     .fromResource("day4.txt")
     .getLines
     .zipWithIndex

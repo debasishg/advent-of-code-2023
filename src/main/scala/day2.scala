@@ -18,7 +18,7 @@ private def part1 =
                 cc.color == "green" && cc.count > 13 ||
                 cc.color == "blue" && cc.count > 14
 
-    io.Source
+    scala.io.Source
         .fromResource("day2.txt")
         .getLines
         .foldLeft(0): (count, line) =>
@@ -26,7 +26,7 @@ private def part1 =
             if !anyExceeds(colorCounts) then count + gameId else count
 
 private def part2 =
-    io.Source
+    scala.io.Source
         .fromResource("day2.txt")
         .getLines
         .map: line =>

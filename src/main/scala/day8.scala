@@ -4,7 +4,7 @@ import scala.util.control.Breaks.*
 
 case class Input(lrs: List[LR], lines: List[(String, (String, String))])
 
-val buildInput = io.Source
+val buildInput = scala.io.Source
     .fromResource("day8.txt")
     .getLines
     .filterNot(_.isEmpty)

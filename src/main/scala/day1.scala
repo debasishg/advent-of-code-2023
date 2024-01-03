@@ -9,7 +9,7 @@ private def part1 =
             second <- s.findLast(_.isDigit).map(_.toString.toInt)
         yield 10 * first + second
 
-    io.Source
+    scala.io.Source
         .fromResource("day1.txt")
         .getLines
         .flatMap(boundingInt)
@@ -63,7 +63,7 @@ private def part2 =
             yield first * 10 + second
         else None
 
-    io.Source
+    scala.io.Source
         .fromResource("day1.txt")
         .getLines
         .flatMap: line =>

@@ -2,7 +2,7 @@ package advent2023.day9
 
 import scala.annotation.tailrec
 
-val buildInput = io.Source
+val buildInput = scala.io.Source
     .fromResource("day9.txt")
     .getLines
     .map(_.split(" ").toList.map(_.toLong))
